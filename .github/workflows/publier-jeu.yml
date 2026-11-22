@@ -1,0 +1,52 @@
+name: Publier le Jeu des possibles LS4YOU
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - export-epoc.zip
+      - .github/workflows/publier-jeu.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Decompresser et verifier l'export ePoc
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          unzip -q export-epoc.zip -d _site
+          test -f _site/index.html || { echo 'index.html manquant'; exit 1; }
+          test -f _site/404.html || { echo '404.html manquant'; exit 1; }
+          test -f _site/assets/demo/epocs/LS4YOU-JDP/content.json || { echo 'contenu ePoc manquant'; exit 1; }
+          test -d _site/assets || { echo 'assets manquant'; exit 1; }
+          echo 'Export ePoc valide pour publication.'
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Preparer le site pour GitHub Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Publier le site
+        id: deployment
+        uses: actions/deploy-pages@v4
