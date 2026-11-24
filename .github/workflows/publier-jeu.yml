@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - export-epoc.zip
+      - app/**
       - .github/workflows/publier-jeu.yml
   workflow_dispatch:
 
@@ -38,6 +39,15 @@ jobs:
           test -f _site/assets/demo/epocs/LS4YOU-JDP/content.json || { echo 'contenu ePoc manquant'; exit 1; }
           test -d _site/assets || { echo 'assets manquant'; exit 1; }
           echo 'Export ePoc valide pour publication.'
+
+      - name: Installer l'habillage LS4YOU (lecteur sur mesure)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Le lecteur ePoc d'origine reste disponible en secours sur epoc.html
+          mv _site/index.html _site/epoc.html
+          cp app/index.html _site/index.html
+          echo 'Habillage installé.'
 
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v5
