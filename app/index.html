@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#CC3234">
+<title>Le jeu des possibles</title>
+<meta name="description" content="LS4YOU · Des situations de la vraie vie, tes choix, tes Life Skills.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Mulish:wght@500;600;700;800&display=swap">
+<style>
+/* VOICE: complice, énergique, jamais scolaire — une app que les jeunes ont envie d'ouvrir.
+   IDEA: un jeu de cartes vivant, joué comme des stories : on pioche, on choisit, on collectionne ses Life Skills.
+   PICTURE: grandes bulles de couleur LS4YOU qui flottent, cartes empilées, stickers de Life Skills qui « pop ».
+   COLOUR and TYPE: aplats rouge #CC3234, jaune, turquoise, menthe, orange ; Fredoka pour la voix, Mulish pour lire.
+   LAYOUT: mobile d'abord, une action par écran, bouton principal sous le pouce ; colonne de 560px sur grand écran. */
+:root{color-scheme:light dark;
+ --red:#CC3234;--yel:#FFD23F;--aqua:#45D9C3;--mint:#A8E6CF;--ora:#FFB347;--pink:#FFA5A5;--ink0:#1A1A1A;
+ --bg:light-dark(#FFF8F3,#141012);--card:light-dark(#FFFFFF,#221C1E);--ink:light-dark(#1A1A1A,#F7EFEA);--mute:light-dark(#5E5552,#BFB3AE);
+ --line:light-dark(#EFE5E0,#3A3134);--btn:light-dark(#1A1A1A,#FFD23F);--btnt:light-dark(#FFFFFF,#1A1A1A);--mom:light-dark(#1A1A1A,#3A3134);--soft:light-dark(#F7F0EC,#2B2427);--shadow:light-dark(0 18px 40px rgba(60,20,20,.14),0 18px 40px rgba(0,0,0,.5))}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Mulish,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Fredoka,system-ui,sans-serif;margin:0;line-height:1.05;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible{outline:3px solid var(--yel);outline-offset:3px;border-radius:12px}
+.app{max-width:560px;margin:0 auto;min-height:100%;position:relative}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(18px)}}
+.blob{position:absolute;border-radius:50%;pointer-events:none;animation:float 9s ease-in-out infinite}
+@keyframes float{50%{transform:translate(10px,-14px) scale(1.04)}}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:14px 22px;border-radius:999px;font:700 18px Fredoka,sans-serif;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn.main{background:var(--btn);color:var(--btnt);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+.btn.yel{background:var(--yel);color:var(--ink0)}
+.btn.ghost{background:transparent;border:2px solid currentColor;color:var(--ink)}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.ico{width:24px;height:24px;flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 12px;font:600 13px Fredoka,sans-serif}
+
+/* ---------- accueil */
+.hero{position:relative;background:var(--red);color:#fff;padding:22px 22px 34px;overflow:hidden;border-radius:0 0 40px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:2}
+.logo{background:#fff;border-radius:14px;padding:6px 10px;display:inline-flex}.logo img{height:30px;display:block}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 14px;font:600 14px Fredoka,sans-serif;backdrop-filter:blur(6px)}
+.hero h1{font-size:clamp(46px,13vw,68px);font-weight:700;margin:34px 0 12px;position:relative;z-index:2;letter-spacing:-.01em}
+.hero h1 span{display:block;color:var(--yel)}
+.hero p{font:700 18px/1.4 Mulish,sans-serif;max-width:24ch;position:relative;z-index:2;margin:0}
+.deck{position:relative;height:250px;margin:26px auto 6px;max-width:330px;z-index:2}
+.dc{position:absolute;inset:0;border-radius:28px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink0);box-shadow:0 20px 40px rgba(0,0,0,.25);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.dc small{font:600 12px Fredoka,sans-serif;letter-spacing:.02em;background:rgba(0,0,0,.08);border-radius:999px;padding:4px 10px;align-self:flex-start}
+.dc b{font:700 27px/1.08 Fredoka,sans-serif}
+.dc i{font-style:normal;font-weight:700;font-size:14px}
+.dc:nth-child(1){background:var(--aqua);transform:rotate(-9deg) translate(-26px,10px)}
+.dc:nth-child(2){background:var(--ora);transform:rotate(7deg) translate(24px,4px)}
+.dc:nth-child(3){background:#fff;transform:rotate(-1deg)}
+.deck:hover .dc:nth-child(1){transform:rotate(-14deg) translate(-44px,14px)}.deck:hover .dc:nth-child(2){transform:rotate(12deg) translate(42px,6px)}
+.homeacts{display:grid;gap:12px;padding:24px 22px 8px}
+.how{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px 22px}
+.how div{border-radius:22px;padding:14px;color:var(--ink0);font-size:14px;line-height:1.35}
+.how b{display:block;font:700 17px Fredoka,sans-serif;margin-bottom:2px}
+.how em{font:700 28px Fredoka,sans-serif;font-style:normal;display:block;opacity:.35;line-height:1}
+.foot{display:flex;gap:12px;align-items:center;padding:20px 22px 30px;color:var(--mute);font-size:11px;line-height:1.35}
+.foot img{height:30px;background:#fff;border-radius:6px;padding:3px;flex:none}
+
+/* ---------- thèmes */
+.bar{display:flex;align-items:center;gap:12px;padding:18px 20px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.bar h2{font-size:26px;flex:1}
+.round{width:46px;height:46px;border-radius:50%;background:var(--card);display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--shadow);flex:none}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:10px 20px 30px}
+.tile{position:relative;overflow:hidden;border-radius:26px;padding:16px;min-height:150px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink0);transition:transform .2s}
+.tile:active{transform:scale(.97)}
+.tile.wide{grid-column:1/-1;min-height:120px}
+.tile .tic{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center}
+.tile b{font:700 20px/1.1 Fredoka,sans-serif;display:block;margin-top:14px}
+.tile .prog{display:flex;gap:4px;margin-top:10px}.tile .prog i{flex:1;height:6px;border-radius:6px;background:rgba(0,0,0,.14)}.tile .prog i.on{background:var(--ink0)}
+.tile .bub2{position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.28)}
+.intro{margin:4px 20px 0;color:var(--mute);font-size:15px}
+
+/* ---------- jeu (stories) */
+.play{background:var(--th);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;color:var(--ink0)}
+.segs{display:flex;gap:5px;padding:14px 18px 0;position:relative;z-index:3}.segs i{flex:1;height:5px;border-radius:5px;background:rgba(0,0,0,.15);overflow:hidden}.segs i.on{background:var(--ink0)}
+.phead{display:flex;align-items:center;gap:10px;padding:12px 18px 0;position:relative;z-index:3}
+.phead .chip{background:rgba(255,255,255,.65);color:var(--ink0)}
+.phead .sp{flex:1}
+.phead .round{background:rgba(255,255,255,.7);box-shadow:none;width:42px;height:42px;color:var(--ink0)}
+.stage{position:relative;z-index:2;padding:18px 18px 0;flex:1;display:flex;flex-direction:column}
+.big{font:700 clamp(30px,8.5vw,40px)/1.05 Fredoka,sans-serif;margin:6px 0 16px;color:var(--ink0)}
+.who{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.av{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 26px Fredoka,sans-serif;border:4px solid #fff;box-shadow:0 8px 18px rgba(0,0,0,.15);flex:none;color:var(--ink0)}
+.who b{font:700 19px Fredoka,sans-serif;display:block}.who div span{font-size:14px;opacity:.8;line-height:1.3;display:block}
+.sheet{background:var(--card);color:var(--ink);border-radius:30px 30px 0 0;margin:14px -18px 0;padding:24px 22px 18px;box-shadow:0 -10px 30px rgba(0,0,0,.08);flex:1}
+.sheet p{margin:0 0 12px}
+.moment{position:relative;background:var(--mom);color:#fff;border-radius:24px;padding:16px 18px;font:700 18px/1.4 Mulish,sans-serif;margin:6px 0 6px}
+.moment::before{content:"";position:absolute;left:28px;top:-12px;border:12px solid transparent;border-bottom-color:var(--mom);border-top:0}
+.cta{position:sticky;bottom:0;padding:14px 0 calc(16px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--card) 70%,transparent);margin-top:6px}
+.q{font:700 22px/1.2 Fredoka,sans-serif;margin:0 0 6px;color:var(--ink)}
+.qs{font-size:14px;color:var(--mute);margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opt{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:start;text-align:left;background:var(--soft);border:2px solid transparent;border-radius:22px;padding:14px;transition:background .2s,border-color .2s,opacity .2s}
+.opt .L{width:40px;height:40px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font:700 18px Fredoka,sans-serif;color:var(--ink)}
+.opt .t{font-weight:800;font-size:16px;line-height:1.35;padding-top:8px}
+.opt .fb{grid-column:2;font-size:15px;line-height:1.45;margin-top:2px;display:none}
+.opt .tag{grid-column:2;justify-self:start;font:600 12px Fredoka,sans-serif;border-radius:999px;padding:3px 10px;margin-top:4px;display:none}
+.opts.done .opt .fb,.opts.done .opt .tag.show{display:block}
+.opts.done .opt{opacity:.55}
+.opts.done .opt.pick{opacity:1;background:var(--th);border-color:var(--ink0);color:var(--ink0)}
+.opts.done .opt.pick .L{background:var(--ink0);color:#fff}
+.opts.done .opt.best .tag{background:var(--ink0);color:var(--yel)}
+.opts.done .opt.pick .tag{background:var(--ink0);color:#fff}
+.note{background:var(--soft);border-radius:18px;padding:12px 14px;font-size:14.5px;margin-top:12px;color:var(--ink)}
+.lsopt{display:flex;align-items:center;gap:12px;text-align:left;border-radius:22px;padding:12px 14px;background:color-mix(in srgb,var(--fc) 30%,var(--card));border:2px solid transparent;color:var(--ink);transition:opacity .2s}
+.lsopt .dot{width:44px;height:44px;border-radius:50%;background:var(--fc);display:flex;align-items:center;justify-content:center;font:700 15px Fredoka,sans-serif;color:var(--ink0);flex:none}
+.lsopt b{font:700 16.5px/1.25 Fredoka,sans-serif}
+.lsopt small{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.opts.done .lsopt{opacity:.45}.opts.done .lsopt.ok{opacity:1;border-color:var(--ink)}.opts.done .lsopt.pick{opacity:1}
+.reveal{display:grid;justify-items:center;text-align:center;padding:6px 0 4px;position:relative}
+.stk{width:132px;height:132px;border-radius:50%;background:var(--fc);display:flex;flex-direction:column;align-items:center;justify-content:center;border:7px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.18);animation:pop .7s cubic-bezier(.2,1.6,.4,1);color:var(--ink0)}
+.stk b{font:700 34px Fredoka,sans-serif;line-height:1}.stk small{font:600 11px Fredoka,sans-serif;max-width:90px;line-height:1.15}
+@keyframes pop{0%{transform:scale(.2) rotate(-40deg);opacity:0}70%{transform:scale(1.08) rotate(6deg)}}
+.conf{position:absolute;top:60px;left:50%;width:10px;height:10px;border-radius:50%;animation:burst 1s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
+.reveal h3{font-size:23px;margin:14px 0 4px;color:var(--ink)}.reveal .fam{font-size:13px;color:var(--mute)}
+.newtag{display:inline-block;background:var(--yel);color:var(--ink0);border-radius:999px;padding:4px 12px;font:700 13px Fredoka,sans-serif;margin-top:10px}
+.why{background:var(--soft);border-radius:18px;padding:12px 14px;text-align:left;margin-top:14px;font-size:15px}
+.also{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14.5px;text-align:left}.also .dot{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:700 12px Fredoka,sans-serif;color:var(--ink0)}
+.at{background:var(--ink0);color:#fff;border-radius:22px;padding:14px 16px;margin-bottom:14px;font-size:15px}
+.at small{display:block;opacity:.8;margin-top:6px}
+.at .chip{background:var(--yel);color:var(--ink0);margin-bottom:8px}
+.multi .opt.pick{background:var(--th);border-color:var(--ink0);color:var(--ink0)}
+.multi .opt.pick .fb{display:block}
+.blk{border-radius:24px;padding:16px;margin-bottom:12px}
+.blk .chip{margin-bottom:8px}
+.blk h3{font-size:21px;line-height:1.15;margin-bottom:4px}
+.blk .meta{font-size:13px;opacity:.75;margin-bottom:8px}
+.blk .txt{font-size:15px;line-height:1.5;margin:6px 0 0}.blk .txt b{font-weight:800}
+.blk .lab{display:block;font:600 12px Fredoka,sans-serif;letter-spacing:.03em;opacity:.8}
+.blk a.go{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;background:var(--ink0);color:#fff;border-radius:16px;padding:13px 16px;font:700 16px Fredoka,sans-serif;text-decoration:none}
+.sens{border:2px solid var(--red);border-radius:18px;padding:12px 14px;font-size:14px;margin-bottom:12px}
+.endc{text-align:center;padding:10px 0}
+.endc .stk{margin:0 auto}
+.endc h2{font-size:34px;margin:18px 0 6px;color:var(--ink)}
+
+/* ---------- carnet */
+.fam{padding:6px 20px 4px}
+.fam h3{font-size:18px;display:flex;align-items:center;gap:8px;margin:14px 0 10px}.fam h3 i{width:14px;height:14px;border-radius:50%;background:var(--fc)}
+.stks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.st{border-radius:22px;padding:14px;background:var(--soft);display:grid;gap:8px;justify-items:start}
+.st .d{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 17px Fredoka,sans-serif;border:3px dashed var(--line);color:var(--mute)}
+.st.on{background:color-mix(in srgb,var(--fc) 32%,var(--card))}.st.on .d{background:var(--fc);border:4px solid #fff;color:var(--ink0);box-shadow:0 6px 14px rgba(0,0,0,.12)}
+.st b{font:700 15px/1.2 Fredoka,sans-serif}.st small{font-size:12.5px;color:var(--mute)}
+.meter{margin:6px 20px 0;height:14px;border-radius:14px;background:var(--soft);overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--ora),var(--yel),var(--aqua));border-radius:14px;transition:width .6s}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink0);color:#fff;border-radius:999px;padding:12px 18px;font:600 15px Fredoka,sans-serif;z-index:50;animation:in .3s;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+.load{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--red);color:#fff;font:700 22px Fredoka,sans-serif}
+@media(min-width:700px){body{background:radial-gradient(circle at 10% 10%,color-mix(in srgb,var(--yel) 40%,var(--bg)),var(--bg) 40%),var(--bg)}.app{box-shadow:0 0 60px rgba(0,0,0,.08)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="load">Le jeu des possibles…</div></div>
+<script>
+{
+const DATA = "assets/demo/epocs/LS4YOU-JDP/content.json";
+const ASSETS = "assets/demo/epocs/LS4YOU-JDP/";
+const KEY = "ls4you-jdp-v1";
+const FAM = {P:["Personnalité","#FF7B7D"],A:["Mon image","#FFB347"],B:["Bien-être","#45D9C3"],F:["Argent et ressources","#A8E6CF"]};
+const PCOL = {ines:"#FFD23F",kylian:"#FFB347",maelle:"#FFA5A5",yanis:"#A8E6CF",sarah:"#45D9C3",leo:"#FFE7A6",aya:"#C9F3EA",tom:"#FFD9D1"};
+const TH = [["#FFD23F","brief"],["#FFB347","brief"],["#45D9C3","cap"],["#FFA5A5","compass"],["#A8E6CF","bus"],["#FFE7A6","heart"],["#C9F3EA","home"],["#FFD9D1","mega"],["#FFD23F","coin"],["#45D9C3","phone"],["#FFB347","pin"]];
+const IC = {
+ brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+ cap:'<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/>',
+ compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+ bus:'<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 18v3M16 18v3"/>',
+ heart:'<path d="M12 20s-8-4.6-8-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 8 2.8C20 15.4 12 20 12 20z"/>',
+ home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10M10 20v-6h4v6"/>',
+ mega:'<path d="M3 10v4l11 5V5z"/><path d="M14 8a4 4 0 0 1 0 8M7 15l1 5"/>',
+ coin:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 1 0 0 7M7 11h6M7 13.5h6"/>',
+ phone:'<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+ pin:'<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>', arrow:'<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+ dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/>',
+ grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',
+ star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>', ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+};
+const ico = (n, s = 24) => `<svg class="ico" style="width:${s}px;height:${s}px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ""}</svg>`;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const P = new DOMParser();
+const dom = h => P.parseFromString(`<div id="r">${h || ""}</div>`, "text/html").getElementById("r");
+const txt = h => (dom(h).textContent || "").replace(/\s+/g, " ").trim();
+/* garde seulement le texte et le gras, pour un rendu propre */
+const rich = el => { let o = ""; el.childNodes.forEach(n => { if (n.nodeType === 3) o += esc(n.textContent); else if (n.nodeName === "B" || n.nodeName === "STRONG") o += "<b>" + esc(n.textContent) + "</b>"; else if (n.nodeName === "BR") o += " "; else if (n.nodeName !== "IMG") o += rich(n); }); return o.replace(/\s+/g, " ").trim(); };
+
+/* ---------- état */
+let S = {done:{}, ls:{}};
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+let D, CH = [], SIT = {}, LS = {}, cur = null;
+const $app = document.getElementById("app");
+
+/* ---------- lecture du contenu ePoc */
+function parseSit(c) {
+  const r = dom(c.html), o = {title: c.title, chip: "", who: null, ctx: [], moment: ""};
+  const sp = r.querySelector("span"); if (sp) o.chip = sp.textContent.trim();
+  const t = [...r.querySelectorAll("div")].find(d => /font-size:\s*2[4-8]px/.test(d.getAttribute("style") || "")); if (t) o.title = t.textContent.trim();
+  const img = r.querySelector("img[src*='perso-']");
+  if (img) { const id = (img.getAttribute("src").match(/perso-(\w+)/) || [])[1], b = img.parentElement.querySelector("b"), s = img.parentElement.querySelector("span");
+    o.who = {id, name: b ? b.textContent.trim() : "", line: s ? s.textContent.trim() : ""}; }
+  r.querySelectorAll("p").forEach(p => { const x = p.textContent.trim(); if (x && !/^Page suivante/.test(x)) o.ctx.push(x); });
+  const m = [...r.querySelectorAll("div")].find(d => /border:\s*3px/.test(d.getAttribute("style") || "")); if (m) o.moment = m.textContent.trim();
+  if (!o.ctx.length && !o.moment) o.raw = txt(c.html);
+  return o;
+}
+function parseGo(c) {
+  const r = dom(c.html), root = r.firstElementChild || r, out = [];
+  [...root.children].forEach(el => {
+    if (el.tagName !== "DIV") return;
+    const st = el.getAttribute("style") || "";
+    if (/font-size:\s*2[2-6]px/.test(st) && !el.children.length) return; // titre « Ce qui aurait aidé… »
+    const tags = [...el.querySelectorAll(":scope > span")].map(s => s.textContent.trim());
+    const lab = el.querySelector(":scope > p[style*='uppercase']");
+    const kindTxt = tags[0] || (lab ? lab.textContent.trim() : "");
+    const b = {tags, kind: kindTxt, title: "", meta: "", parts: [], links: []};
+    if (/3114|Urgence/.test(el.textContent) && !kindTxt) { out.push({kind: "sens", text: rich(el)}); return; }
+    [...el.children].forEach(ch => {
+      const cs = ch.getAttribute("style") || "";
+      if (ch.tagName === "SPAN" || ch === lab) return;
+      if (ch.tagName === "A") { b.links.push({href: ch.getAttribute("href"), label: ch.textContent.trim()}); return; }
+      if (/font-size:\s*19px/.test(cs) && !b.title) { b.title = ch.textContent.trim(); return; }
+      if (/font-size:\s*13px/.test(cs) && !b.meta) { b.meta = ch.textContent.trim(); return; }
+      ch.querySelectorAll("a").forEach(a => b.links.push({href: a.getAttribute("href"), label: a.textContent.trim()}));
+      const first = ch.firstElementChild, lb = first && first.tagName === "B" && /uppercase/.test(first.getAttribute("style") || "") ? first.textContent.trim() : "";
+      if (lb) { const cl = ch.cloneNode(true); cl.firstElementChild.remove(); b.parts.push({lab: lb, html: rich(cl)}); }
+      else { const cl = ch.cloneNode(true); cl.querySelectorAll("a").forEach(a => a.remove()); const h = rich(cl); if (h) b.parts.push({html: h}); }
+    });
+    if (kindTxt === "Pour continuer avec LS4YOU" && b.parts.length) { b.title = b.parts[0].html; b.parts.shift(); }
+    out.push(b);
+  });
+  return out;
+}
+function parseLS(q) {
+  const parts = (q.feedback || "").split(/<br\s*\/?>\s*<br\s*\/?>/i), o = {};
+  const head = dom(parts[0] || ""), img = head.querySelector("img"), b = head.querySelector("b");
+  o.code = img ? (img.getAttribute("src").match(/ls-(\w+)/) || [])[1] : null;
+  o.phrase = b ? b.textContent.trim() : "";
+  const m = (head.textContent || "").match(/\(([^)]+)\)/); o.name = m ? m[1] : "";
+  const hs = (parts[0] || "").split(/<br\s*\/?>/i); o.why = hs.length > 1 ? txt(hs.slice(1).join(" ")) : "";
+  const a = dom(parts[1] || ""), ai = a.querySelector("img"), ab = a.querySelector("b");
+  if (ai && ab) o.also = {code: (ai.getAttribute("src").match(/ls-(\w+)/) || [])[1], phrase: ab.textContent.trim()};
+  o.end = txt(parts.slice(2).join(" "));
+  return o;
+}
+function build(E) {
+  D = E;
+  Object.entries(E.chapters).forEach(([cid, ch], i) => {
+    const sits = ch.contents.filter(x => x.endsWith("-sit")).map(x => x.replace(/-sit$/, ""));
+    CH.push({cid, title: ch.title, i, col: TH[i % TH.length][0], ic: TH[i % TH.length][1], sits});
+    sits.forEach(id => {
+      const c = k => E.contents[`${id}-${k}`], q = k => c(k) && E.questions[c(k).question];
+      const s = {id, ch: i, sit: parseSit(c("sit")), q1: q("q1c"), q2: q("q2c"), at: q("atelierc"), atTitle: c("atelierc") && c("atelierc").title, go: c("go") ? parseGo(c("go")) : []};
+      if (s.q2) { s.ls = parseLS(s.q2); const L = s.ls;
+        if (L.code && !LS[L.code]) LS[L.code] = {code: L.code, phrase: L.phrase, name: L.name};
+        if (L.also && L.also.code && !LS[L.also.code]) LS[L.also.code] = {code: L.also.code, phrase: L.also.phrase, name: ""}; }
+      SIT[id] = s;
+    });
+  });
+}
+const lsCol = c => (FAM[(c || "P")[0]] || FAM.P)[1];
+const doneIn = ch => ch.sits.filter(id => S.done[id]).length;
+
+/* ---------- écrans */
+function home() {
+  const ids = Object.keys(SIT), pick = [0, 1, 2].map(k => SIT[ids[(k * 29 + 7) % ids.length]]);
+  const n = Object.keys(S.ls).length, played = Object.keys(S.done).length;
+  return `<section class="screen">
+  <header class="hero">
+    <span class="blob" style="right:-110px;top:250px;width:320px;height:320px;background:var(--yel)"></span><span class="blob" style="right:40px;top:-50px;width:120px;height:120px;background:rgba(255,255,255,.14);animation-delay:-2s"></span>
+    <span class="blob" style="left:-60px;top:330px;width:170px;height:170px;background:var(--pink);animation-delay:-3s"></span>
+    <span class="blob" style="left:40px;top:560px;width:70px;height:70px;background:var(--aqua);animation-delay:-5s"></span>
+    <div class="top"><span class="logo"><img src="${ASSETS}assets/logo-lifeskills.png" alt="Life Skills"></span>
+      <button class="pill" data-go="carnet">${ico("star", 18)} ${n}/15</button></div>
+    <h1>Le jeu <span>des possibles</span></h1>
+    <p>Des moments de la vraie vie. Tes choix. Tes Life Skills.</p>
+    <div class="deck" aria-hidden="true">${pick.map((s, k) => `<div class="dc"><small>${esc(CH[s.ch].title)}</small><b>${esc(s.sit.title)}</b><i>Et toi, tu ferais quoi&#8239;?</i></div>`).join("")}</div>
+  </header>
+  <div class="homeacts">
+    <button class="btn main" data-act="random">${ico("dice")} Pioche une situation</button>
+    <button class="btn ghost" data-go="themes">${ico("grid")} Choisis ton thème</button>
+    ${played ? `<p style="text-align:center;color:var(--mute);margin:4px 0 0;font-size:14px">${played} situation${played > 1 ? "s" : ""} jouée${played > 1 ? "s" : ""} · ${n} Life Skill${n > 1 ? "s" : ""} repérée${n > 1 ? "s" : ""}</p>` : ""}
+  </div>
+  <div class="how">
+    <div style="background:var(--yel)"><em>1</em><b>Lis</b>Un moment précis, juste avant une décision.</div>
+    <div style="background:var(--pink)"><em>2</em><b>Choisis</b>Et découvre ce que ton choix produit.</div>
+    <div style="background:var(--aqua)"><em>3</em><b>Repère</b>La Life Skill en jeu. Elle rejoint ta collection.</div>
+    <div style="background:var(--mint)"><em>4</em><b>Essaie</b>Une piste concrète, pour toi.</div>
+  </div>
+  <p style="padding:0 22px;color:var(--mute);font-size:14px;margin:0">Pas de note, pas de piège. Tu joues à ton rythme, tu t’arrêtes quand tu veux.</p>
+  <footer class="foot"><img src="${ASSETS}assets/logo-ue.jpg" alt="Cofinancé par l’Union européenne"><span>Projet Life Skills 4 Youth (LS4YOU) — n° 2023-2-FR02-KA220-YOU-000175417. Financé par l’Union européenne. Les points de vue et avis exprimés n’engagent que leur(s) auteur(s) et ne reflètent pas nécessairement ceux de l’Union européenne ou de l’Agence Erasmus+ France Jeunesse &amp; Sport. Ni l’Union européenne ni l’autorité chargée de l’octroi ne sauraient en être tenues pour responsables.</span></footer>
+  </section>`;
+}
+function themes() {
+  return `<section class="screen"><div class="bar"><button class="round" data-go="" aria-label="Accueil">${ico("back")}</button><h2>Choisis ton thème</h2></div>
+  <p class="intro">Chaque thème rassemble des situations de la vraie vie. Commence par celui qui te parle.</p>
+  <div class="grid">${CH.map((c, k) => { const d = doneIn(c);
+    return `<button class="tile${k === 0 ? " wide" : ""}" style="background:${c.col}" data-ch="${k}"><span class="bub2"></span><span class="tic">${ico(c.ic, 24)}</span><span><b>${esc(c.title)}</b><span class="prog" aria-label="${d} sur ${c.sits.length} jouées">${c.sits.map(id => `<i class="${S.done[id] ? "on" : ""}"></i>`).join("")}</span></span></button>`; }).join("")}</div></section>`;
+}
+function carnet() {
+  const n = Object.keys(S.ls).length;
+  return `<section class="screen"><div class="bar"><button class="round" data-go="" aria-label="Accueil">${ico("back")}</button><h2>Ma collection</h2></div>
+  <p class="intro">${n ? `Tu as repéré <b>${n}</b> Life Skill${n > 1 ? "s" : ""} sur 15.` : "Joue une situation pour débloquer ta première Life Skill."} Ta collection reste sur cet appareil.</p>
+  <div class="meter"><i style="width:${n / 15 * 100}%"></i></div>
+  ${Object.keys(FAM).map(f => `<div class="fam" style="--fc:${FAM[f][1]}"><h3><i></i>${FAM[f][0]}</h3><div class="stks">${Object.values(LS).filter(l => l.code[0] === f).sort((a, b) => a.code.localeCompare(b.code)).map(l => {
+    const on = S.ls[l.code]; return `<div class="st ${on ? "on" : ""}" style="--fc:${FAM[f][1]}"><span class="d">${on ? l.code : "?"}</span><b>${esc(l.phrase)}</b><small>${on ? `repérée ${on} fois` : "à découvrir"}</small></div>`; }).join("")}</div></div>`).join("")}
+  <div style="padding:20px"><button class="btn main" style="width:100%" data-act="random">${ico("dice")} Pioche une situation</button></div>
+  <div style="padding:0 20px 30px"><button class="btn" style="width:100%;color:var(--mute);font-size:15px" data-act="reset">Effacer ma progression</button></div></section>`;
+}
+
+/* ---------- partie */
+const STEPS = ["sit", "q1", "q2", "at", "go"];
+function startSit(id) { cur = {id, step: 0, a1: null, a2: null, at: []}; go("jouer-" + id); }
+function playView() {
+  const s = SIT[cur.id], ch = CH[s.ch], who = s.sit.who;
+  const steps = STEPS.filter(k => k === "sit" || k === "go" ? true : !!s[k]);
+  const step = steps[cur.step] || "end";
+  const segs = `<div class="segs" aria-hidden="true">${steps.map((k, i) => `<i class="${i <= cur.step ? "on" : ""}"></i>`).join("")}</div>`;
+  const head = `<div class="phead"><span class="chip">${ico(ch.ic, 16)} ${esc(ch.title)}</span><span class="sp"></span><button class="round" data-act="quit" aria-label="Quitter la situation">${ico("x", 20)}</button></div>`;
+  const avatar = who ? `<span class="av" style="background:${PCOL[who.id] || "#fff"}">${esc((who.name || "?")[0])}</span>` : `<span class="av" style="background:#fff">Toi</span>`;
+  const whoName = who ? (who.name || "").split(",")[0].trim() : "Toi";
+  let body = "", btn = "", top = "";
+  const next = (lab = "Continuer", dis = false) => `<div class="cta"><button class="btn main" style="width:100%" data-act="next" ${dis ? "disabled" : ""}>${lab} ${ico("arrow")}</button></div>`;
+  if (step === "sit") {
+    top = `<span class="chip" style="background:var(--ink0);color:#fff;align-self:flex-start">Situation</span><h2 class="big" style="margin-top:12px">${esc(s.sit.title)}</h2>`;
+    body = `${s.sit.ctx.map(p => `<p>${esc(p)}</p>`).join("")}${s.sit.raw ? `<p>${esc(s.sit.raw)}</p>` : ""}${s.sit.moment ? `<div class="moment">${esc(s.sit.moment)}</div>` : ""}${next("Et toi, tu ferais quoi ?")}`;
+  } else if (step === "q1") {
+    const q = s.q1, done = cur.a1 != null, open = q.correctResponse.length > 1;
+    top = `<h2 class="big" style="font-size:28px;margin-bottom:6px">${esc(s.sit.title)}</h2><p style="margin:0 0 4px;font-weight:700">${esc(s.sit.moment)}</p>`;
+    body = `<p class="q">${esc(txt(q.statement.split(/<br/i)[0]) || "Que fais-tu ?")}</p><p class="qs">${done ? (open ? "Ici, plusieurs chemins se défendent. Compare les retours." : "Lis ton retour, puis jette un œil aux autres.") : "Choisis ce que tu ferais vraiment."}</p>
+    <div class="opts ${done ? "done" : ""}" role="group">${q.responses.map((r, k) => { const best = !open && q.correctResponse.includes(r.value), pick = cur.a1 === k;
+      return `<button class="opt ${pick ? "pick" : ""} ${best ? "best" : ""}" data-a1="${k}" ${done ? "disabled" : ""}><span class="L">${esc(r.value)}</span><span class="t">${esc(r.label)}</span><span class="fb">${esc(r.feedback)}</span><span class="tag ${best || pick ? "show" : ""}">${best ? "La plus aidante" : pick ? "Ton choix" : ""}</span></button>`; }).join("")}</div>
+    ${done ? `<div class="note">${esc(txt(q.feedback))}</div>` : ""}${next("Quelle Life Skill ?", !done)}`;
+  } else if (step === "q2") {
+    const q = s.q2, done = cur.a2 != null, L = s.ls || {}, okv = q.correctResponse[0];
+    top = `<h2 class="big" style="margin-top:4px">Quelle Life Skill cette situation demande&#8239;?</h2>`;
+    if (!done) body = `<p class="qs">Repère-la toi-même. Une seule réponse est attendue, mais ton raisonnement compte.</p><div class="opts">${q.responses.map((r, k) => { const code = Object.values(LS).find(l => l.phrase === r.label); const c = code ? code.code : "?";
+      return `<button class="lsopt" style="--fc:${lsCol(c)}" data-a2="${k}"><span class="dot">${c[0] === "?" ? "?" : FAM[c[0]][0].slice(0, 1)}</span><span><b>${esc(r.label)}</b>${code && code.name ? `<small>${esc(code.name)}</small>` : ""}</span></button>`; }).join("")}</div>${next("Continuer", true)}`;
+    else { const r = q.responses[cur.a2], good = r.value === okv, conf = good ? confetti() : "";
+      body = `<div class="reveal" style="--fc:${lsCol(L.code)}">${conf}<div class="stk"><b>${esc(L.code || "")}</b><small>${esc(FAM[(L.code || "P")[0]][0])}</small></div>
+      <h3>${esc(L.phrase)}</h3><span class="fam">${esc(L.name)}</span>${cur.isNew ? `<span class="newtag">Nouvelle dans ta collection</span>` : ""}</div>
+      <div class="why"><b>${good ? "Bien vu." : "Ton choix : " + esc(r.label) + "."}</b> ${esc(good ? r.feedback.replace(/^Oui\.\s*/, "") : r.feedback)}</div>
+      ${L.also ? `<div class="also"><span class="dot" style="background:${lsCol(L.also.code)}">${esc(L.also.code)}</span><span>Aussi en jeu : <b>${esc(L.also.phrase)}</b></span></div>` : ""}
+      ${L.end ? `<div class="note">${esc(L.end)}</div>` : ""}${next(s.at ? "À toi de jouer" : "On essaie")}`; }
+  } else if (step === "at") {
+    const q = s.at, done = cur.at.length > 0, st = dom(q.statement), lead = st.querySelector("b"), small = st.querySelector("small");
+    let mid = q.statement.replace(/<b>.*?<\/b>/i, "").replace(/<small>.*?<\/small>/i, ""); mid = txt(mid);
+    top = `<span class="chip" style="background:var(--ink0);color:#fff;align-self:flex-start">${esc(s.atTitle || "À toi de jouer")}</span><h2 class="big" style="margin-top:12px">${esc(q.label)}</h2>`;
+    body = `${lead ? `<div class="at"><span class="chip">La situation</span><div>${esc(lead.textContent)}</div></div>` : ""}<p class="q">${esc(mid)}</p><p class="qs">${esc(small ? small.textContent : "Choisis une piste à essayer.")}</p>
+    <div class="opts multi">${q.responses.map((r, k) => `<button class="opt ${cur.at.includes(k) ? "pick" : ""}" data-at="${k}" aria-pressed="${cur.at.includes(k)}"><span class="L">${esc(r.value)}</span><span class="t">${esc(r.label)}</span><span class="fb">${esc(r.feedback)}</span></button>`).join("")}</div>
+    ${done ? `<div class="note">${esc(txt(q.feedback))}</div>` : ""}${next("On essaie", !done)}`;
+  } else if (step === "go") {
+    top = `<span class="chip" style="background:var(--ink0);color:#fff;align-self:flex-start">On essaie</span><h2 class="big" style="margin-top:12px">Ce qui peut aider… et toi</h2>`;
+    const sty = {"Activité du Guide": ["var(--red)", "#fff"], "Activité de groupe": ["var(--red)", "#fff"], "Plateforme LS4YOU": ["var(--ink0)", "#fff"], "Et toi ?": ["var(--mint)", "var(--ink0)"], "Pour continuer avec LS4YOU": ["var(--yel)", "var(--ink0)"]};
+    body = s.go.map(b => { if (b.kind === "sens") return `<div class="sens">${b.text}</div>`;
+      const [bg, fg] = sty[b.kind] || ["var(--soft)", "var(--ink)"];
+      return `<div class="blk" style="background:${bg};color:${fg}"><span class="chip" style="background:rgba(255,255,255,.22);color:${fg}">${esc(b.kind)}${b.tags[1] ? " · " + esc(b.tags[1].toLowerCase()) : ""}</span>
+      ${b.title ? `<h3>${b.kind === "Pour continuer avec LS4YOU" ? b.title : esc(b.title)}</h3>` : ""}${b.meta ? `<div class="meta">${esc(b.meta)}</div>` : ""}
+      ${b.parts.map(p => `<p class="txt">${p.lab ? `<span class="lab">${esc(p.lab)}</span>` : ""}${p.html}</p>`).join("")}
+      ${b.links.map(l => `<a class="go" href="${esc(l.href)}" target="_blank" rel="noopener" style="${bg === "var(--ink0)" ? "background:var(--aqua);color:var(--ink0)" : ""}">${esc(l.label.replace(/\s*[↗→]\s*$/, ""))} ${ico("ext", 20)}</a>`).join("")}</div>`; }).join("") + next("J’ai fini cette situation");
+  } else {
+    const L = s.ls || {}, d = doneIn(ch), rest = ch.sits.find(id => !S.done[id]);
+    top = "";
+    body = `<div class="endc" style="--fc:${lsCol(L.code)}">${confetti()}<div class="stk"><b>${esc(L.code || "★")}</b><small>${esc(L.phrase || "")}</small></div><h2>Situation bouclée&#8239;!</h2>
+      <p style="color:var(--mute)">${d}/${ch.sits.length} dans le thème ${esc(ch.title)} · ${Object.keys(S.ls).length}/15 Life Skills dans ta collection.</p></div>
+      <div style="display:grid;gap:10px;padding:8px 0 calc(20px + env(safe-area-inset-bottom))">
+      ${rest ? `<button class="btn main" data-sit="${rest}">Situation suivante ${ico("arrow")}</button>` : `<button class="btn main" data-act="random">${ico("dice")} Pioche ailleurs</button>`}
+      <button class="btn ghost" data-go="themes">${ico("grid")} Changer de thème</button><button class="btn" style="color:var(--mute)" data-go="carnet">${ico("star")} Voir ma collection</button></div>`;
+  }
+  return `<section class="play screen" style="--th:${ch.col}">
+    <span class="blob" style="right:-70px;top:40px;width:200px;height:200px;background:rgba(255,255,255,.35)"></span>
+    <span class="blob" style="left:-40px;top:220px;width:110px;height:110px;background:rgba(255,255,255,.22);animation-delay:-4s"></span>
+    ${step === "end" ? "" : segs}${head}<div class="stage">${top}<div class="sheet">${body}</div></div></section>`;
+}
+function confetti() {
+  const c = ["#CC3234", "#FFD23F", "#45D9C3", "#A8E6CF", "#FFB347", "#FFA5A5"];
+  return Array.from({length: 18}, (_, i) => { const a = i / 18 * Math.PI * 2, r = 90 + (i % 3) * 30;
+    return `<i class="conf" style="background:${c[i % 6]};--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r)}px;animation-delay:${(i % 4) * 40}ms"></i>`; }).join("");
+}
+
+/* ---------- navigation */
+function render() {
+  const h = location.hash.replace("#", "");
+  if (h.startsWith("jouer-")) { const id = h.slice(6); if (!SIT[id]) return go(""); if (!cur || cur.id !== id) cur = {id, step: 0, a1: null, a2: null, at: []}; $app.innerHTML = playView(); }
+  else if (h === "themes") $app.innerHTML = themes();
+  else if (h === "carnet") $app.innerHTML = carnet();
+  else $app.innerHTML = home();
+  document.documentElement.style.setProperty("--th", h.startsWith("jouer-") && cur ? CH[SIT[cur.id].ch].col : "");
+}
+function go(h) { if (location.hash.replace("#", "") === h) { render(); } else location.hash = h; window.scrollTo(0, 0); }
+function toast(m) { const d = document.createElement("div"); d.className = "toast"; d.setAttribute("role", "status"); d.textContent = m; document.body.appendChild(d); setTimeout(() => d.remove(), 2400); }
+function randomSit() { const ids = Object.keys(SIT), free = ids.filter(id => !S.done[id]), pool = free.length ? free : ids; startSit(pool[Math.floor(Math.random() * pool.length)]); }
+function stepNext() {
+  const s = SIT[cur.id], steps = STEPS.filter(k => k === "sit" || k === "go" ? true : !!s[k]);
+  if (steps[cur.step] === "go") { S.done[cur.id] = 1; save(); }
+  cur.step++; $app.innerHTML = playView(); window.scrollTo({top: 0, behavior: "smooth"});
+}
+$app.addEventListener("click", e => {
+  const t = e.target.closest("button,[data-go]"); if (!t) return;
+  const d = t.dataset;
+  if (d.go !== undefined) return go(d.go);
+  if (d.ch !== undefined) { const c = CH[+d.ch]; return startSit(c.sits.find(id => !S.done[id]) || c.sits[0]); }
+  if (d.sit) return startSit(d.sit);
+  if (d.act === "random") return randomSit();
+  if (d.act === "quit") { cur = null; return go("themes"); }
+  if (d.act === "next") return stepNext();
+  if (d.act === "reset") { if (t.dataset.sure) { S = {done: {}, ls: {}}; save(); toast("Progression effacée"); return render(); } t.dataset.sure = 1; t.textContent = "Touche encore pour confirmer"; return; }
+  if (d.a1 !== undefined) { cur.a1 = +d.a1; $app.innerHTML = playView(); return; }
+  if (d.a2 !== undefined) { const s = SIT[cur.id], L = s.ls || {}; cur.a2 = +d.a2;
+    [L.code, L.also && L.also.code].filter(Boolean).forEach((c, i) => { if (i === 0) cur.isNew = !S.ls[c]; S.ls[c] = (S.ls[c] || 0) + 1; }); save(); $app.innerHTML = playView(); return; }
+  if (d.at !== undefined) { const k = +d.at; cur.at = cur.at.includes(k) ? cur.at.filter(x => x !== k) : [...cur.at, k]; $app.innerHTML = playView(); return; }
+});
+window.addEventListener("hashchange", render);
+fetch(DATA).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(E => { build(E); render(); })
+  .catch(() => { $app.innerHTML = `<div class="load" style="flex-direction:column;gap:10px;padding:30px;text-align:center">Le contenu du jeu n’a pas pu être chargé.<small style="font:500 15px Mulish,sans-serif">Vérifie ta connexion, puis recharge la page.</small></div>`; });
+}
+</script>
+</body>
+</html>
