@@ -1,12 +1,11 @@
-name: Publier le Jeu des possibles LS4YOU
+name: Publier le Jeu des possibles LS4YOU (roue)
 
 on:
   push:
     branches: [main]
     paths:
-      - export-epoc.zip
-      - app/**
-      - .github/workflows/publier-jeu.yml
+      - 'export-epoc.zip'
+      - '.github/workflows/publier-jeu.yml'
   workflow_dispatch:
 
 permissions:
@@ -21,32 +20,24 @@ concurrency:
 
 jobs:
   build:
-    name: Préparer le site
+    name: Préparer le jeu avec la roue
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le dépôt
         uses: actions/checkout@v4
 
-      - name: Décompresser et vérifier l'export ePoc
+      - name: Décompresser et vérifier le jeu LS4YOU
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p _site
           unzip -q export-epoc.zip -d _site
-          test -f _site/index.html || { echo 'index.html manquant'; exit 1; }
+          test -s _site/index.html || { echo 'index.html manquant'; exit 1; }
+          grep -Fq 'id="wheelSvg"' _site/index.html || { echo 'La version avec la roue est absente de index.html'; exit 1; }
+          test -s _site/epoc.html || { echo 'Le lecteur ePoc est manquant'; exit 1; }
           test -f _site/404.html || { echo '404.html manquant'; exit 1; }
-          test -f _site/assets/demo/epocs/LS4YOU-JDP/content.json || { echo 'contenu ePoc manquant'; exit 1; }
-          test -d _site/assets || { echo 'assets manquant'; exit 1; }
-          echo 'Export ePoc valide pour publication.'
-
-      - name: Installer l'habillage LS4YOU (lecteur sur mesure)
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f app/index.html || { echo 'app/index.html manquant'; exit 1; }
-          mv _site/index.html _site/epoc.html
-          cp app/index.html _site/index.html
-          echo 'Habillage installé.'
+          test -f _site/assets/demo/epocs/LS4YOU-JDP/content.json || { echo 'Le contenu ePoc est manquant'; exit 1; }
+          echo 'Version avec la roue et parcours ePoc vérifiés.'
 
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v5
@@ -71,4 +62,3 @@ jobs:
       - name: Déployer sur GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-     
