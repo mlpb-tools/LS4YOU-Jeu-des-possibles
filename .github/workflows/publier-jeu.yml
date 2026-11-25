@@ -1,10 +1,10 @@
-name: Publier le Jeu des possibles LS4YOU (roue)
+name: Publier le Jeu des possibles LS4YOU
 
 on:
   push:
     branches: [main]
     paths:
-      - 'export-epoc.zip'
+      - 'LS4YOU_site_a_publier.zip'
       - '.github/workflows/publier-jeu.yml'
   workflow_dispatch:
 
@@ -20,45 +20,44 @@ concurrency:
 
 jobs:
   build:
-    name: Préparer le jeu avec la roue
+    name: Préparer la version autonome
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le dépôt
         uses: actions/checkout@v4
 
-      - name: Décompresser et vérifier le jeu LS4YOU
+      - name: Installer le site LS4YOU
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p _site
-          unzip -q export-epoc.zip -d _site
+          unzip -q LS4YOU_site_a_publier.zip -d _site
           test -s _site/index.html || { echo 'index.html manquant'; exit 1; }
-          grep -Fq 'id="wheelSvg"' _site/index.html || { echo 'La version avec la roue est absente de index.html'; exit 1; }
-          test -s _site/epoc.html || { echo 'Le lecteur ePoc est manquant'; exit 1; }
-          test -f _site/404.html || { echo '404.html manquant'; exit 1; }
-          test -f _site/assets/demo/epocs/LS4YOU-JDP/content.json || { echo 'Le contenu ePoc est manquant'; exit 1; }
-          echo 'Version avec la roue et parcours ePoc vérifiés.'
+          grep -Fq 'id="wheelSvg"' _site/index.html || { echo 'La roue est absente'; exit 1; }
+          grep -Fq 'Devine la Life Skill !' _site/index.html || { echo 'Le défi Life Skill est absent'; exit 1; }
+          grep -Fq 'prepa-visites/' _site/index.html || { echo 'Le lien Prépa visites est absent'; exit 1; }
+          echo 'Version autonome LS4YOU prête.'
 
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Préparer l'archive GitHub Pages
+      - name: Préparer l’artefact GitHub Pages
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
 
   deploy:
-    name: Publier le site
+    name: Publier la version autonome
     needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       actions: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Déployer sur GitHub Pages
+      - name: Publier le site
         id: deployment
         uses: actions/deploy-pages@v4
